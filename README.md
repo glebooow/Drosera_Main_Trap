@@ -44,7 +44,7 @@ This repository contains the Solidity smart contract and integration logic for r
 Clone the repository:
 
 ```bash
-git clone https://github.com/<your-username>/BalanceDeltaTrap.git
+git clone https://github.com/<glebooow>/BalanceDeltaTrap.git
 cd BalanceDeltaTrap
 ```
 
