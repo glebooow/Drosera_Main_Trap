@@ -82,7 +82,7 @@ A simple responder contract that logs alerts from the trap.
 Clone the repository:
 
 ```bash
-git clone https://github.com/<your-username>/BalanceDeltaTrap.git
+git clone https://github.com/<glebooow>/BalanceDeltaTrap.git
 cd BalanceDeltaTrap
 ```
 
