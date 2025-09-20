@@ -7,58 +7,62 @@ interface ITrap {
 }
 
 contract BalanceDeltaTrap is ITrap {
-    address public constant target = "";
-    uint256 public constant thresholdWei = 1e15;
+    // TODO: Replace with the address you want to monitoring
+    address public constant target = 0x0000000000000000000000000000000000000001;
+    uint256 public constant thresholdWei = 1e15; // 0.001 ETH
 
     function collect() external view override returns (bytes memory) {
-        uint256 bal = target.balance;
-        uint256 ts = block.timestamp;
-        return abi.encode(bal, ts);
+        return abi.encode(target.balance, block.timestamp);
     }
 
+    // data[0] = newest, data[1] = previous
     function shouldRespond(bytes[] calldata data) external pure override returns (bool, bytes memory) {
         if (data.length < 2) {
-            return (false, abi.encodePacked("Insufficient data - need previous and current snapshots"));
+            return (false, abi.encode("insufficient_data"));
         }
 
-        (uint256 prevBal, uint256 prevTs) = abi.decode(data[0], (uint256, uint256));
-        (uint256 currBal, uint256 currTs) = abi.decode(data[1], (uint256, uint256));
+        (uint256 currBal, uint256 currTs) = abi.decode(data[0], (uint256, uint256));
+        (uint256 prevBal, uint256 prevTs) = abi.decode(data[1], (uint256, uint256));
 
         uint256 diff = currBal > prevBal ? currBal - prevBal : prevBal - currBal;
-
-        if (diff >= thresholdWei) {
-            bytes memory msgBytes = abi.encodePacked(
-                "Balance change detected: prev=",
-                _uintToString(prevBal),
-                " curr=",
-                _uintToString(currBal),
-                " diff=",
-                _uintToString(diff),
-                " ts_prev=",
-                _uintToString(prevTs),
-                " ts_curr=",
-                _uintToString(currTs)
-            );
-            return (true, msgBytes);
+        if (diff < thresholdWei) {
+            return (false, abi.encode(""));
         }
 
-        return (false, abi.encodePacked(""));
+        string memory msgStr = string(
+            abi.encodePacked(
+                "Balance change detected: prev=",
+                _u(prevBal),
+                " curr=",
+                _u(currBal),
+                " diff=",
+                _u(diff),
+                " ts_prev=",
+                _u(prevTs),
+                " ts_curr=",
+                _u(currTs)
+            )
+        );
+
+        // Return an ABI-encoded string that matches the responder signature.
+        return (true, abi.encode(msgStr));
     }
 
-    function _uintToString(uint256 v) internal pure returns (string memory) {
+    // utility: uint256 -> string
+    function _u(uint256 v) internal pure returns (string memory) {
         if (v == 0) return "0";
-        uint256 temp = v;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
+        uint256 n = v;
+        uint256 d;
+        while (n != 0) {
+            d++;
+            n /= 10;
         }
-        bytes memory buffer = new bytes(digits);
+        bytes memory b = new bytes(d);
         while (v != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(v % 10)));
+            d--;
+            b[d] = bytes1(uint8(48 + (v % 10)));
             v /= 10;
         }
-        return string(buffer);
+        return string(b);
     }
 }
