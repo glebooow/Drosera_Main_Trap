@@ -9,10 +9,10 @@ This repository contains both the Solidity smart contract (`BalanceDeltaTrap.sol
 
 ## Features
 
-* **Balance delta detection** – reacts to increases or decreases in ETH balance.
-* **Configurable threshold** – triggers only when the balance change exceeds a defined value in wei.
-* **ABI-compatible payloads** – returns ABI-encoded strings for responder compatibility.
-* **Compatible with Drosera Operator** – fully integrates with the Drosera attestation and submission system.
+* **Balance delta detection** - reacts to increases or decreases in ETH balance.
+* **Configurable threshold** - triggers only when the balance change exceeds a defined value in wei.
+* **ABI-compatible payloads** - returns ABI-encoded strings for responder compatibility.
+* **Compatible with Drosera Operator** - fully integrates with the Drosera attestation and submission system.
 
 ---
 
